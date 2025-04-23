@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {ref, useTemplateRef} from "vue";
 import {CalendarDate} from '@internationalized/date'
 import type {ITask} from "@/types.ts";
+import {parseDate} from '@internationalized/date';
 
 const tasks = ref<ITask[]>([])
 const drawerRef = ref<boolean>(false);
@@ -9,7 +10,7 @@ const modalTitleRef = ref<string>('');
 const inputTitleRef = ref<string>('');
 const inputDescriptionRef = ref<string>('');
 const selectedDateRef = ref<CalendarDate | null>(null);
-const inputImportFileRef = ref(null);
+const inputFileTemplateRef = useTemplateRef<HTMLInputElement | null>('fileInput')
 
 
 const onClickDate = (date: CalendarDate): void => {
@@ -49,13 +50,13 @@ const getTasksByDate = (): ITask[] => {
 
 const onRemoveTask = (taskId: number): void => {
 	const targetTask = tasks.value.find(({id}: ITask) => id === taskId);
-	const targetTaskIndex = tasks.value.indexOf(targetTask);
+	const targetTaskIndex = tasks.value.indexOf(targetTask!);
 	tasks.value.splice(targetTaskIndex, 1);
 }
 
 const onCompleteTask = (taskId: number): void => {
-	const targetTask = tasks.value.find(({id}: ITask) => id === taskId);
-	targetTask.isCompleted = !targetTask.isCompleted;
+	const targetTask = tasks.value.find((task: ITask) => task.id === taskId);
+	targetTask!.isCompleted = !targetTask!.isCompleted;
 }
 
 const getTasksCountAtDate = (date: Date): number => {
@@ -64,17 +65,30 @@ const getTasksCountAtDate = (date: Date): number => {
 	)).length
 }
 
+const onUploadFile = () => {
+	if (inputFileTemplateRef.value !== null) {
+		const fileValue = new FileReader()
+		fileValue.onload = () => {
+			const tasksFrommFile: ITask[] = JSON.parse(fileValue.result as string);
+			tasksFrommFile.forEach((item) => {
+				const itemToPush = {
+					...item,
+					date: parseDate(item.date as unknown as string)
+				}
+				tasks.value.push(itemToPush)
+			})
+		}
+		fileValue.readAsText(inputFileTemplateRef.value.files[0])
+	}
+}
+
 </script>
 
 <template>
 	<UApp>
 		<section class="mb-[5rem]! md:mb-0!">
 			<h3>Import tasks from .json file</h3>
-			<UInput
-				type="file"
-				v-model="inputImportFileRef"
-				@update:model-value="console.log(inputImportFileRef)"
-			/>
+			<input type="file" ref="fileInput" @change="onUploadFile" />
 		</section>
 		<UDrawer
 			v-model:open="drawerRef"
@@ -107,6 +121,7 @@ const getTasksCountAtDate = (date: Date): number => {
 						<ul class="flex flex-col gap-4">
 							<li v-for="task in getTasksByDate()">
 								<UCard>
+									{{task.date}}
 									<h3
 										class="text-white text-lg"
 										:class="{'line-through': task.isCompleted}"
