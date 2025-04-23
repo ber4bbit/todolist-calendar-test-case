@@ -5,7 +5,7 @@ export interface ITask {
     title: string,
     description: string,
     date: CalendarDate,
-    isCompleted: boolean,
+    isCompleted: boolean
 }
 
 /**
