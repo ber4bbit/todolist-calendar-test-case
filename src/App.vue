@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, shallowRef} from "vue";
+import {ref} from "vue";
 import {CalendarDate} from '@internationalized/date'
 import type {ITask} from "@/types.ts";
 
@@ -8,7 +8,9 @@ const drawerRef = ref<boolean>(false);
 const modalTitleRef = ref<string>('');
 const inputTitleRef = ref<string>('');
 const inputDescriptionRef = ref<string>('');
-const selectedDateRef = ref<CalendarDate | null>(null)
+const selectedDateRef = ref<CalendarDate | null>(null);
+const inputImportFileRef = ref(null);
+
 
 const onClickDate = (date: CalendarDate): void => {
 	drawerRef.value = true;
@@ -66,6 +68,14 @@ const getTasksCountAtDate = (date: Date): number => {
 
 <template>
 	<UApp>
+		<section class="mb-[5rem]! md:mb-0!">
+			<h3>Import tasks from .json file</h3>
+			<UInput
+				type="file"
+				v-model="inputImportFileRef"
+				@update:model-value="console.log(inputImportFileRef)"
+			/>
+		</section>
 		<UDrawer
 			v-model:open="drawerRef"
 			:handle="false"
