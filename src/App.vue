@@ -124,6 +124,7 @@ watch(tasks, (value) => {
 			</section>
 			<UCalendar
 				size="xl"
+				week-starts-on="1.0"
 				@update:modelValue="onClickDate"
 				:yearControls="false"
 			>
