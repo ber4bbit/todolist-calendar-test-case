@@ -60,7 +60,7 @@ const onAddTask = () => {
 							<h3
 								class="text-white text-lg"
 								:class="{'line-through': task.isCompleted}"
-							>Task:</h3>
+							>Задача:</h3>
 							<!-- Блок названия задачи -->
 							<span
 								v-if="!isTaskEditing(task.id)"
@@ -77,7 +77,7 @@ const onAddTask = () => {
 								<h3
 									class="text-white text-lg"
 									:class="{'line-through': task.isCompleted}"
-								>Description:</h3>
+								>Описание:</h3>
 								<p
 									v-if="!isTaskEditing(task.id)"
 									class="text-white text-sm"
