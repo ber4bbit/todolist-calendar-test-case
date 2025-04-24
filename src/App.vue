@@ -103,15 +103,39 @@ watch(tasks, (value) => {
 
 <template>
 	<UApp>
-		<section class="mb-[5rem]! md:mb-0!">
-			<h3>Import tasks from .json file</h3>
-			<input type="file" ref="fileInput" @change="onUploadFile" />
-			<ULink
-				download="tasks.json"
-				:disabled="!tasks.length"
-				:to="downloadURL"
-			>Export tasks to .json file</ULink>
-		</section>
+		<main class="flex flex-col gap-[5rem]">
+			<section class="flex flex-col gap-4">
+				<UCard>
+					<template #header>
+						<h3>Загрузить задачи из .json файла</h3>
+						<input type="file" ref="fileInput" @change="onUploadFile" />
+					</template>
+					<UTooltip :disabled="!!tasks.length" text="Добавьте задачи для возможности их выгрузки">
+						<ULink
+							download="tasks.json"
+							:disabled="!tasks.length"
+							:to="downloadURL"
+						>Выгрузить задачи в .json файл</ULink>
+					</UTooltip>
+				</UCard>
+				<UCard>
+					Чтобы добавить задачу или просмотреть задачи определенного дня, кликните по дате
+				</UCard>
+			</section>
+			<UCalendar
+				size="xl"
+				@update:modelValue="onClickDate"
+				:yearControls="false"
+			>
+				<template #day="{day}">
+					<UChip
+						size="3xl"
+						:show="getTaskByDate(day.toDate('UTC'))"
+						:text="getTasksCountAtDate(day.toDate('UTC'))"
+					>{{day.day}}</UChip>
+				</template>
+			</UCalendar>
+		</main>
 		<TaskDrawer
 			:is-open="isDrawerOpenedRef"
 			:selected-date="selectedDateRef"
@@ -121,17 +145,5 @@ watch(tasks, (value) => {
 			@remove-task="onRemoveTask"
 			@toggle-complete="onCompleteTask"
 		/>
-		<UCalendar
-			size="xl"
-			@update:modelValue="onClickDate"
-		>
-			<template #day="{day}">
-				<UChip
-					size="3xl"
-					:show="getTaskByDate(day.toDate('UTC'))"
-					:text="getTasksCountAtDate(day.toDate('UTC'))"
-				>{{day.day}}</UChip>
-			</template>
-		</UCalendar>
 	</UApp>
 </template>

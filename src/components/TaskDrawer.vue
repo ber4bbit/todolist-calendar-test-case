@@ -34,26 +34,27 @@ const onAddTask = () => {
 		:handle="false"
 		direction="right"
 		@close="emit('close')"
+		@update:open="(open) => !open && emit('close')"
 	>
 		<template #header>
 			<header class="flex gap-36 items-center">
-				<h2 class="text-xl text-white">Add task on {{props.selectedDate!.toString()}}</h2>
+				<h2 class="text-xl text-white">Добавить задачу на {{props.selectedDate!.toString()}}</h2>
 				<UButton color="neutral" variant="ghost" icon="i-lucide-x" @click="emit('close')" />
 			</header>
 		</template>
 		<template #body>
 			<main class="flex flex-col h-full gap-12">
 				<section class="flex flex-col gap-4">
-					<UInput v-model="inputTaskTitleRef" placeholder="Enter a task title"/>
-					<UInput v-model="inputTaskDescriptionRef" placeholder="Enter a task description"/>
+					<UInput v-model="inputTaskTitleRef" placeholder="Введите название задачи"/>
+					<UInput v-model="inputTaskDescriptionRef" placeholder="Введите описание задачи"/>
 					<UButton
-						label="Add task"
+						label="Добавить задачу"
 						class="justify-center"
 						@click="onAddTask"
 					/>
 				</section>
 				<section v-if="props.tasksOnDate.length" class="flex flex-col gap-4">
-					<span class="text-lg text-white">Tasks on on this day</span>
+					<span class="text-lg text-white">Задачи на этот день</span>
 					<ul v-for="task in props.tasksOnDate" :key="task.id">
 						<UCard>
 							<h3
@@ -124,7 +125,7 @@ const onAddTask = () => {
 						</UCard>
 					</ul>
 				</section>
-				<span v-else class="text-lg text-white">You have no tasks on this day</span>
+				<span v-else class="text-lg text-white">У вас нет задач на этот день!</span>
 			</main>
 		</template>
 	</UDrawer>
